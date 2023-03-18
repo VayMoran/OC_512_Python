@@ -1,0 +1,64 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Created on Wed Mar 15 20:41:12 2023
+
+@author: steven
+"""
+
+import numpy as np
+import pandas as pd
+from matplotlib import pyplot as plt
+
+# Loading Data
+table_cells = pd.read_table("hw4_data.txt", delim_whitespace=True, skiprows=1)
+table_header = pd.read_table("hw4_data.txt", delim_whitespace=True)
+table_header = table_header[0:0]
+
+# Rip Date and Times out of the table
+year = table_cells.loc[:,'yr'].astype(str)
+month = table_cells.loc[:,'mo'].astype(str)
+day = table_cells.loc[:,'dy'].astype(str)
+hour = table_cells.loc[:,'hr'].astype(str)
+minute = table_cells.loc[:,'mn'].astype(str)
+
+# Create datetime punctuation
+dashes, colons, time = np.empty(year.size, dtype=str),np.empty(year.size, dtype=str),np.empty(year.size, dtype=str)
+dashes[:],colons[:],time[:]='-',':','T'
+
+# Produce an Array of date time
+my_datetime = np.add(year,dashes)
+my_datetime = np.add(my_datetime, month)
+my_datetime = np.add(my_datetime, dashes)
+my_datetime = np.add(my_datetime, day)
+my_datetime = np.add(my_datetime, time)
+my_datetime = np.add(my_datetime, hour)
+my_datetime = np.add(my_datetime, colons)
+my_datetime = np.add(my_datetime, minute)
+my_datetime = pd.to_datetime(my_datetime)
+
+# Replace Year column with datetime
+table_cells['yr'] = my_datetime
+# Remove Unnecessary columns
+table_cells.drop(['mo','dy','hr','mn'],axis=1, inplace=True)
+table_header.drop(['YY','MM','DD','hh','mm'],axis=1,inplace=True)
+
+# Create Plot of Air Temperature against Datetime
+fig1 = plt.figure()
+plt.plot(table_cells['yr'],table_cells['degC'])
+plt.gcf().autofmt_xdate()
+plt.title('Air Temperature by Time')
+plt.xlabel('Date')
+plt.ylabel("Air Temperature (C)")
+plt.show()
+
+# Scatter Plot of Waveheight by wind speed
+fig2 = plt.figure() 
+plt.scatter(table_cells['m/s'],table_cells['m'])
+plt.title('Wave Height by Wind Speed')
+
+test_table = table_cells.set_index('yr').resample('D').mean()
+test_table = test_table.round(0)
+test_table.to_csv('test.csv')
+
+
