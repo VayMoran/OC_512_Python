@@ -59,6 +59,6 @@ plt.title('Wave Height by Wind Speed')
 
 test_table = table_cells.set_index('yr').resample('D').mean()
 test_table = test_table.round(0)
-test_table.to_csv('test.csv')
+test_table.to_csv('hw4_export.csv')
 
 
