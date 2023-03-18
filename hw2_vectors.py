@@ -1,6 +1,11 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 import numpy
+import os
+
+os.system('clear')
+%clear
+%reset -f
 
 """
 Question 1: Use a method of your choice to create the row vector x having 100 regularly

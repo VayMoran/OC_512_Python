@@ -1,0 +1,19 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Created on Sat Mar 18 01:24:11 2023
+
+@author: steven
+"""
+
+import numpy as np
+import glob
+import os
+
+os.system('clear')
+%clear
+%reset -f
+
+filenames = glob.glob('hw5_data/*.asc')
+for f in filenames:
+    print(f)
