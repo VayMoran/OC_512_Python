@@ -5,15 +5,34 @@ Created on Sat Mar 18 01:24:11 2023
 
 @author: steven
 """
-
+import matplotlib.pyplot as plt
+import rasterio
 import numpy as np
+
 import glob
 import os
 
 os.system('clear')
-%clear
-%reset -f
 
+average_raster = []
 filenames = glob.glob('hw5_data/*.asc')
-for f in filenames:
-    print(f)
+
+for i in range(0,len(filenames)):
+    file = rasterio.open(filenames[0])
+    dataset = file.read()
+    dataset[dataset <= 0] = 0
+    if i==0:
+        average_raster = dataset[0]
+    elif i < len(filenames):
+        average_raster = average_raster+dataset[0]
+
+bounds = file.bounds
+average_raster = average_raster/ len(filenames)
+dataset[0] = average_raster
+plt.imshow(dataset[0], cmap='Spectral',extent=(bounds[0],bounds[2],bounds[3],bounds[1]))
+plt.colorbar()
+plt.xlabel("Longitude")
+plt.ylabel("Latitude")
+plt.title("Annual Precipitiation in Oregon")
+plt.show()
+

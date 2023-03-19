@@ -16,22 +16,20 @@ os.system('clear')
 %reset -f
 
 # Loading Data
-table_cells = pd.read_table("hw4_data.txt", delim_whitespace=True, skiprows=1)
+table_cells = pd.read_table("hw4_data.txt", delim_whitespace=True, skiprows=[1])
 # Creating Header Array
-table_header = pd.read_table("hw4_data.txt", delim_whitespace=True)
-table_header = table_header.columns.to_numpy()
-table_header = np.column_stack((table_header, table_cells.columns.to_numpy()))
-table_header = table_header.T
+table_header = np.genfromtxt('hw4_data.txt', dtype=str)
+table_header = table_header[0:2]
 table_header[0,0]= 'Date'
 table_header[1,0]= 'dt'
 
 
 # Rip Date and Times out of the table
-year = table_cells.loc[:,'yr'].astype(str)
-month = table_cells.loc[:,'mo'].astype(str)
-day = table_cells.loc[:,'dy'].astype(str)
-hour = table_cells.loc[:,'hr'].astype(str)
-minute = table_cells.loc[:,'mn'].astype(str)
+year = table_cells.loc[:,'YY'].astype(str)
+month = table_cells.loc[:,'MM'].astype(str)
+day = table_cells.loc[:,'DD'].astype(str)
+hour = table_cells.loc[:,'hh'].astype(str)
+minute = table_cells.loc[:,'mm'].astype(str)
 
 # Create datetime punctuation
 dashes, colons, time = np.empty(year.size, dtype=str),np.empty(year.size, dtype=str),np.empty(year.size, dtype=str)
@@ -49,14 +47,14 @@ my_datetime = np.add(my_datetime, minute)
 my_datetime = pd.to_datetime(my_datetime)
 
 # Replace Year column with datetime
-table_cells['yr'] = my_datetime
+table_cells['YY'] = my_datetime
 # Remove Unnecessary columns
-table_cells.drop(['mo','dy','hr','mn'],axis=1, inplace=True)
+table_cells.drop(['MM','DD','hh','mm'],axis=1, inplace=True)
 table_header = np.delete(table_header,(1,2,3,4),axis=1)
 
 # Create Plot of Air Temperature against Datetime
 fig1 = plt.figure()
-plt.plot(table_cells['yr'],table_cells['degC'])
+plt.plot(table_cells['YY'],table_cells['ATMP'])
 plt.gcf().autofmt_xdate()
 plt.title('Air Temperature by Time')
 plt.xlabel('Date')
@@ -65,13 +63,13 @@ plt.show()
 
 # Scatter Plot of Waveheight by wind speed
 fig2 = plt.figure() 
-plt.scatter(table_cells['m/s'],table_cells['m'])
+plt.scatter(table_cells['WSPD'],table_cells['WVHT'])
 plt.title('Wave Height by Wind Speed')
 plt.xlabel('Wind Speed (m/s)')
 plt.ylabel('Wave Height (m)')
 
 # Resample Datetime to get average per day
-export_table = table_cells.set_index('yr').resample('D').mean()
+export_table = table_cells.set_index('YY').resample('D').mean()
 export_table = export_table.reset_index()
 # Exporting Data as CSV
 export_table = export_table.round(0).to_numpy()
